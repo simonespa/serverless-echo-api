@@ -41,5 +41,5 @@ functions:
     events:
       - http: GET /world
 
-plugin:
+plugins:
   - serverless-offline
