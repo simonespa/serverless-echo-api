@@ -1,0 +1,36 @@
+{
+  "name": "echo-api",
+  "version": "1.0.0",
+  "description": "An example of serverless app",
+  "scripts": {
+    "deploy": "sls deploy --stage production",
+    "start": "sls offline start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simonespa/serverless-echo-api.git"
+  },
+  "keywords": [
+    "Serverless",
+    "AWS",
+    "AWS Lambda"
+  ],
+  "author": {
+    "name": "Simone Spaccarotella",
+    "email": "spa.simone@gmail.com",
+    "url": "https://www.linkedin.com/in/simonespaccarotella"
+  },
+  "bugs": {
+    "url": "https://github.com/simonespa/serverless-echo-api/issues"
+  },
+  "homepage": "https://github.com/simonespa/serverless-echo-api#readme",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "express": "^4.17.1",
+    "serverless-http": "^2.3.0"
+  },
+  "devDependencies": {
+    "serverless": "^1.61.3",
+    "serverless-offline": "^5.12.1"
+  }
+}
