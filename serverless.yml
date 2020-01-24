@@ -1,19 +1,19 @@
 service: echo-api
 
 custom:
-   region: ${opt:region, 'eu-west-1'}
-   stage: ${opt:stage, 'development'}
-   prefix: ${self:custom.stage}-${self:service}
+  region: ${opt:region, 'eu-west-1'}
+  stage: ${opt:stage, 'development'}
+  prefix: ${self:custom.stage}-${self:service}
 
 provider:
-   name: aws
-   runtime: nodejs12.x
-   region: ${self:custom.region}
-   stage: ${self:custom.stage}
-   stackName: ${self:custom.prefix}
-   apiName: ${self:custom.prefix}
-   logRetentionInDays: 1
-   iamRoleStatements:
+  name: aws
+  runtime: nodejs12.x
+  region: ${self:custom.region}
+  stage: ${self:custom.stage}
+  stackName: ${self:custom.prefix}
+  apiName: ${self:custom.prefix}
+  logRetentionInDays: 1
+  iamRoleStatements:
     - Effect: Allow
       Action:
         - logs:CreateLogGroup
@@ -26,20 +26,20 @@ package:
     - src/**
 
 functions:
-   hello:
-      handler: src/handler.hello # required, handler set in AWS Lambda
-      name: ${self:custom.prefix}-hello # optional, Deployed Lambda name
-      description: Says hello # optional, Description to publish to AWS
-      memorySize: 512 # optional, in MB, default is 1024
-      events:
-         - http: GET /hello
-   world:
-      handler: src/handler.world # required, handler set in AWS Lambda
-      name: ${self:custom.prefix}-world # optional, Deployed Lambda name
-      description: Says world # optional, Description to publish to AWS
-      memorySize: 512 # optional, in MB, default is 1024
-      events:
-         - http: GET /world
+  hello:
+    handler: src/handler.hello # required, handler set in AWS Lambda
+    name: ${self:custom.prefix}-hello # optional, Deployed Lambda name
+    description: Says hello # optional, Description to publish to AWS
+    memorySize: 512 # optional, in MB, default is 1024
+    events:
+      - http: GET /hello
+  world:
+    handler: src/handler.world # required, handler set in AWS Lambda
+    name: ${self:custom.prefix}-world # optional, Deployed Lambda name
+    description: Says world # optional, Description to publish to AWS
+    memorySize: 512 # optional, in MB, default is 1024
+    events:
+      - http: GET /world
 
 plugin:
-   - serverless-offline
+  - serverless-offline
