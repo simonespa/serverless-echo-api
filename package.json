@@ -1,5 +1,5 @@
 {
-  "name": "echo-api",
+  "name": "serverless-echo-api",
   "version": "1.0.0",
   "description": "An example of serverless app",
   "scripts": {
