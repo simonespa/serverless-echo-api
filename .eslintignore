@@ -1,0 +1,12 @@
+.github
+.nyc_output
+coverage
+node_modules
+.eslintcache
+.eslintignore
+.prettierignore
+LICENSE
+mocha.opts
+*.yml
+*.json
+*.md

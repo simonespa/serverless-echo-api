@@ -4,7 +4,11 @@
   "description": "An example of serverless app",
   "scripts": {
     "deploy": "sls deploy --stage production",
-    "start": "sls offline start"
+    "start": "sls offline start",
+    "lint": "eslint --cache --fix ./",
+    "format": "prettier --write '**/*.{js,yml,md}'",
+    "pretest": "npm run lint",
+    "test": "echo test"
   },
   "repository": {
     "type": "git",
@@ -30,7 +34,29 @@
     "serverless-http": "^2.3.0"
   },
   "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-mocha": "^6.2.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.2.1",
+    "lint-staged": "^10.0.2",
+    "prettier": "^1.19.1",
     "serverless": "^1.61.3",
     "serverless-offline": "^5.12.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "!(*.js)": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
