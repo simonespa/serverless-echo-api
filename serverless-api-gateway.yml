@@ -2,7 +2,7 @@ service: echo-api
 
 custom:
   region: ${opt:region, 'eu-west-1'}
-  stage: ${opt:stage, 'development'}
+  stage: ${opt:stage, 'dev'}
   prefix: ${self:custom.stage}-${self:service}
 
 provider:

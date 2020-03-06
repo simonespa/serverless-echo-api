@@ -1,0 +1,122 @@
+service: echo-api
+
+custom:
+  region: ${opt:region, 'eu-west-1'}
+  stage: ${opt:stage, 'dev'}
+  prefix: ${self:custom.stage}-${self:service}
+  vpcConfig:
+    dev:
+      vpcId: vpc-81dc12e5
+      subnets:
+        - subnet-a63be3d0
+        - subnet-2aba4e72
+        - subnet-140abe70
+    prod:
+      vpcId: vpc-54db1530
+      subnets:
+        - subnet-d5a4508d
+        - subnet-f1f74095
+        - subnet-423ee634
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ${self:custom.region}
+  stage: ${self:custom.stage}
+  stackName: ${self:custom.prefix}
+  apiName: ${self:custom.prefix}
+  tracing:
+    lambda: true
+  logRetentionInDays: 1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+      Resource: '*'
+
+package:
+  include:
+    - src/**
+
+functions:
+  hello:
+    handler: src/handler.hello # required, handler set in AWS Lambda
+    name: ${self:custom.prefix}-hello # optional, Deployed Lambda name
+    description: Says hello # optional, Description to publish to AWS
+    memorySize: 512 # optional, in MB, default is 1024
+    events:
+      - alb:
+          listenerArn:
+            Ref: Listener
+          priority: 1
+          conditions:
+            path: /hello
+  world:
+    handler: src/handler.world # required, handler set in AWS Lambda
+    name: ${self:custom.prefix}-world # optional, Deployed Lambda name
+    description: Says world # optional, Description to publish to AWS
+    memorySize: 512 # optional, in MB, default is 1024
+    events:
+      - alb:
+          listenerArn:
+            Ref: Listener
+          priority: 2
+          conditions:
+            path: /world
+
+plugins:
+  - serverless-offline
+
+resources:
+  Outputs:
+    LoadBalancerDNSName:
+      Description: The DNS name of the Application Load Balancer
+      Value:
+        Fn::GetAtt:
+          - LoadBalancer
+          - DNSName
+      Export:
+        Name:
+          Fn::Sub: ${self:custom.prefix}-LoadBalancerDNSName
+  Resources:
+    SecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: Generic HTTP Security Group
+        SecurityGroupIngress:
+          - CidrIp: 0.0.0.0/0
+            FromPort: 80
+            IpProtocol: tcp
+            ToPort: 80
+        VpcId: ${self:custom.vpcConfig.${self:custom.stage}.vpcId}
+
+    LoadBalancer:
+      Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+      Properties:
+        SecurityGroups:
+          - Ref: SecurityGroup
+        Subnets: ${self:custom.vpcConfig.${self:custom.stage}.subnets}
+
+    TargetGroup:
+      Type: AWS::ElasticLoadBalancingV2::TargetGroup
+      Properties:
+        TargetType: lambda
+
+    Listener:
+      Type: AWS::ElasticLoadBalancingV2::Listener
+      Properties:
+        DefaultActions:
+          - Type: 'redirect'
+            RedirectConfig:
+              Protocol: 'HTTPS'
+              Port: '443'
+              Host: '#{host}'
+              Path: '/#{path}'
+              Query: '#{query}'
+              StatusCode: 'HTTP_301'
+        LoadBalancerArn:
+          Ref: LoadBalancer
+        Port: 80
+        Protocol: HTTP
