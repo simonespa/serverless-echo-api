@@ -4,19 +4,6 @@ custom:
   region: ${opt:region, 'eu-west-1'}
   stage: ${opt:stage, 'dev'}
   prefix: ${self:custom.stage}-${self:service}
-  vpcConfig:
-    dev:
-      vpcId: vpc-81dc12e5
-      subnets:
-        - subnet-a63be3d0
-        - subnet-2aba4e72
-        - subnet-140abe70
-    prod:
-      vpcId: vpc-54db1530
-      subnets:
-        - subnet-d5a4508d
-        - subnet-f1f74095
-        - subnet-423ee634
 
 provider:
   name: aws
@@ -90,14 +77,14 @@ resources:
             FromPort: 80
             IpProtocol: tcp
             ToPort: 80
-        VpcId: ${self:custom.vpcConfig.${self:custom.stage}.vpcId}
+        VpcId: ${file(./vpc-config.${self:custom.stage}.yaml):vpcId}
 
     LoadBalancer:
       Type: AWS::ElasticLoadBalancingV2::LoadBalancer
       Properties:
         SecurityGroups:
           - Ref: SecurityGroup
-        Subnets: ${self:custom.vpcConfig.${self:custom.stage}.subnets}
+        Subnets: ${file(./vpc-config.${self:custom.stage}.yaml):subnets}
 
     TargetGroup:
       Type: AWS::ElasticLoadBalancingV2::TargetGroup

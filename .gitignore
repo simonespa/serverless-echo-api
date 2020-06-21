@@ -1,2 +1,4 @@
 .serverless
 node_modules
+vpc-config.dev.yaml
+vpc-config.prod.yaml
